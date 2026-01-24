@@ -1,0 +1,12 @@
+gradio
+langchain
+langchain-openai
+langchain-community
+langchain-postgres
+langgraph
+pypdf
+psycopg2-binary
+python-dotenv
+langfuse
+huggingface-hub
+dotenv
