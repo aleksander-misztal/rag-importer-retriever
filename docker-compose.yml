@@ -1,41 +1,33 @@
 version: "3.9"
 
 services:
-  # 1. Baza danych PGVector (Serce Twojego RAG)
+  # PostgreSQL with PGVector
   db:
     image: pgvector/pgvector:pg16
     container_name: rag_db
     restart: unless-stopped
     ports:
-      - "${DB_PORT}:5432"  # Udostępnia port (np. 5435) dla skryptów uruchamianych lokalnie
+      - "${DB_PORT:-5435}:5432"
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-postgres}
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  # 2. Importer - Budowany z lokalnego folderu
-  importer:
-    build: ./importer
-    container_name: rag_importer
+  # Unified RAG Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag_app
     ports:
       - "7860:7860"
+    env_file:
+      - .env
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    depends_on:
-      - db
-
-  # 3. Retriever - Budowany z lokalnego folderu
-  retriever:
-    build: ./retriever
-    container_name: rag_retriever
-    ports:
-      - "7861:7860" # Mapowanie na 7861 na hoście, aby nie gryzło się z Importerem
-    environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DB_HOST=db
+      - DB_PORT=5432
     depends_on:
       - db
 
