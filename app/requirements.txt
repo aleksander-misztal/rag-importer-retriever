@@ -1,0 +1,17 @@
+gradio
+fastapi
+uvicorn
+langchain
+langchain-openai
+langchain-community
+langchain-postgres
+langchain-text-splitters
+langgraph
+pymupdf
+psycopg2-binary
+python-dotenv
+langfuse
+huggingface-hub
+dependency-injector
+pydantic-settings
+pytz
