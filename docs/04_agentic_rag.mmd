@@ -1,0 +1,28 @@
+flowchart TD
+    Q([Pytanie]) --> SEC["Security Check\ngpt-4o-mini"]
+    SEC -->|safe| AGENT
+    SEC -->|unsafe| BLOCK([Zablokowane])
+
+    subgraph loop[Pętla ReAct — max 5 iteracji]
+        AGENT["Agent LLM\ngpt-4o-mini"]
+        REASON["Reasoning\nczy mam wystarczający kontekst?"]
+        ACT["Act\ngeneruj query do wyszukania"]
+        OBS["Observe\nocena nowych chunków"]
+
+        AGENT --> REASON
+        REASON -->|nie — szukaj dalej| ACT
+        ACT --> OBS
+        OBS -->|aktualizuj kontekst| AGENT
+    end
+
+    subgraph db[rag_db]
+        PG[("PGVector")]
+    end
+
+    ACT <-->|vector search · k=20| PG
+
+    REASON -->|tak — mam kontekst| SYNTH
+    AGENT -->|max_iter osiągnięty| SYNTH
+
+    SYNTH["Synthesizer\ngpt-4o-mini"]
+    SYNTH --> ANS([Odpowiedź])

@@ -1,0 +1,33 @@
+flowchart TD
+    DS([questions.json\n100 pytań + ground truth])
+    CFG([.env / config\narch · model · k])
+    RUNNER[Eval Runner\norchestration]
+
+    DS --> RUNNER
+    CFG --> RUNNER
+
+    subgraph OUTER[dla każdego pytania × 100]
+        subgraph INNER[dla każdego run × 5]
+            COL["MetricsCollector\nLangChain callback\ntokeny · latency · koszt"]
+            RAG["RAG Pipeline\ninvoke(question)\ngpt-4o-mini"]
+            PGV["PGVector\nvector search · top-k=20"]
+            COL --> RAG
+            RAG --> PGV
+        end
+
+        RET["Retrieval Metrics\nrecall · precision · FPR · coverage"]
+        JUDGE["LLM Judge\ngpt-4o\nquality 0–3 · faithfulness"]
+        PERF["Performance\nlatency · tokens · cost_usd"]
+
+        RAG -->|chunk_ids + answer| RET
+        RAG -->|answer + context| JUDGE
+        COL -->|latency · tokens · cost| PERF
+
+        STAB["Stability Analyzer\nvariance · consistency\npo 5 runs"]
+        RET --> STAB
+        JUDGE --> STAB
+        PERF --> STAB
+    end
+
+    RUNNER --> OUTER
+    STAB --> JSON([results/arch_timestamp.json])

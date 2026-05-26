@@ -1,0 +1,25 @@
+flowchart TD
+    Q([Pytanie]) --> SEC["Security Check\ngpt-4o-mini"]
+    SEC -->|safe| S1
+    SEC -->|unsafe| BLOCK([Zablokowane])
+
+    subgraph pipe[RAG Pipeline — Multi-Step]
+        S1["Krok 1\nGenerator → sub-query₁\nExecutor → context₁"]
+        S2["Krok 2\nGenerator → sub-query₂ + context₁\nExecutor → context₂"]
+        S3["Krok 3\nGenerator → sub-query₃ + context₁₂\nExecutor → context₃"]
+        SYNTH["Synthesizer\ngpt-4o-mini\nkonsolidacja kontekstu"]
+
+        S1 -->|context₁ informs| S2
+        S2 -->|context₁₊₂ informs| S3
+        S3 --> SYNTH
+    end
+
+    subgraph db[rag_db]
+        PG[("PGVector")]
+    end
+
+    S1 <-->|vector search| PG
+    S2 <-->|vector search| PG
+    S3 <-->|vector search| PG
+
+    SYNTH --> ANS([Odpowiedź])
