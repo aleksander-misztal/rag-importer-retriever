@@ -29,3 +29,9 @@ Thumbs.db
 
 # Data directory
 data/
+
+# Local documentation / presentations
+documentation/
+
+# Eval results
+eval/results/
