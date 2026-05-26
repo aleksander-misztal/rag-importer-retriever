@@ -73,7 +73,15 @@ class IngestionService:
                     "pages": len(raw_documents),
                     "chunks": saved_count,
                     "file_path": file_path
-                }
+                },
+                "chunk_preview": [
+                    {
+                        "chunk_id": c.metadata.get("chunk_id", ""),
+                        "page": c.metadata.get("page", ""),
+                        "content": c.content,
+                    }
+                    for c in chunks
+                ]
             }
 
         except Exception as e:

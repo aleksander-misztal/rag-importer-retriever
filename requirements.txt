@@ -1,12 +1,17 @@
-gradio
+streamlit
 langchain
 langchain-openai
 langchain-community
 langchain-postgres
+langchain-experimental
+langchain-text-splitters
 langgraph
+# sentence-transformers  # requires torch; install manually or use Docker (Python 3.11)
+pymupdf
 pypdf
 psycopg2-binary
+pydantic-settings
 python-dotenv
 langfuse
 huggingface-hub
-dotenv
+dependency-injector

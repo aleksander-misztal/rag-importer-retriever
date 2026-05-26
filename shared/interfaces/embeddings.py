@@ -19,3 +19,8 @@ class EmbeddingProvider(ABC):
     def get_dimension(self) -> int:
         """Returns embedding dimension (e.g., 1536 for text-embedding-3-small)"""
         pass
+
+    @abstractmethod
+    def get_embeddings(self):
+        """Returns the underlying LangChain Embeddings object (for use with LangChain components)"""
+        pass

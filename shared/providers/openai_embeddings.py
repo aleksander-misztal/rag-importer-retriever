@@ -37,6 +37,10 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
             logger.error(f"Query embedding error: {e}")
             raise
 
+    def get_embeddings(self):
+        """Returns the underlying LangChain Embeddings object."""
+        return self._embeddings
+
     def get_dimension(self) -> int:
         """Returns vector dimension for the model."""
         if "text-embedding-3-small" in self.model:
