@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     # Chunking parameters (for Importer)
     CHUNK_SIZE: int = Field(250, validation_alias="CHUNK_SIZE")
     CHUNK_OVERLAP: int = Field(50, validation_alias="CHUNK_OVERLAP")
+    CHUNKING_STRATEGY: str = Field("recursive", validation_alias="CHUNKING_STRATEGY")  # "recursive" | "semantic"
+
+    # Retrieval
+    RERANKING_ENABLED: bool = Field(True, validation_alias="RERANKING_ENABLED")
+
+    # Evaluation
+    JUDGE_MODEL: str = Field("gpt-4o", validation_alias="JUDGE_MODEL")
 
     @property
     def DATABASE_URL(self) -> str:

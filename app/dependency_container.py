@@ -11,6 +11,8 @@ from importer.services.ingestion_service import IngestionService
 from retriever.core.nodes.security import SecurityNode
 from retriever.core.nodes.generator import GeneratorNode
 from retriever.core.nodes.executor import ExecutorNode
+from retriever.core.nodes.reranker import RerankNode
+from retriever.core.nodes.flatten import FlattenNode
 from retriever.core.nodes.synthesizer import SynthesizerNode
 
 
@@ -51,7 +53,9 @@ class DependencyContainer(containers.DeclarativeContainer):
     document_processor = providers.Singleton(
         DocumentProcessor,
         chunk_size=CONFIG.CHUNK_SIZE,
-        chunk_overlap=CONFIG.CHUNK_OVERLAP
+        chunk_overlap=CONFIG.CHUNK_OVERLAP,
+        chunking_strategy=CONFIG.CHUNKING_STRATEGY,
+        embedding_provider=embedding_provider,
     )
 
     ingestion_service = providers.Singleton(
@@ -84,6 +88,14 @@ class DependencyContainer(containers.DeclarativeContainer):
         document_repository=document_repository,
         k=3
     )
+
+    reranker_node = providers.Factory(
+        RerankNode,
+        model_name="cross-encoder/ms-marco-MiniLM-L-6-v2",
+        top_k_per_query=2,
+    )
+
+    flatten_node = providers.Factory(FlattenNode)
 
     synthesizer_node = providers.Factory(
         SynthesizerNode,

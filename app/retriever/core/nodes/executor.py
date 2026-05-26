@@ -13,22 +13,19 @@ class ExecutorNode:
         self.k = k
 
     def __call__(self, state: GraphState) -> dict:
-        """Performs multi-query retrieval with automatic deduplication"""
+        """Performs multi-query retrieval, returning results grouped by sub-query"""
         queries = state.get("sub_queries", [state["question"]])
 
         try:
-            documents = self.repository.search_batch(queries, k=self.k)
-            context = [doc.content for doc in documents]
-            context_metadata = [doc.metadata for doc in documents]
-            logger.info(f"Retrieved {len(context)} unique documents")
-            return {
-                "context": context,
-                "context_metadata": context_metadata
-            }
+            documents_by_query = {}
+            for query in queries:
+                docs = self.repository.search(query, k=self.k)
+                documents_by_query[query] = docs
+
+            total = sum(len(d) for d in documents_by_query.values())
+            logger.info(f"Retrieved {total} documents across {len(queries)} sub-queries")
+            return {"documents_by_query": documents_by_query}
 
         except Exception as e:
             logger.error(f"Retrieval error: {e}")
-            return {
-                "context": [],
-                "context_metadata": []
-            }
+            return {"documents_by_query": {}}
