@@ -8,4 +8,3 @@ class GraphState(TypedDict):
     context: List[str]                   # Retrieved document fragments
     context_metadata: List[dict]         # Metadata for each fragment
     answer: str                          # Final LLM-generated answer
-    is_safe: bool                        # Security check result

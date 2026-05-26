@@ -15,7 +15,6 @@ logger = setup_logger("retriever_ui")
 def get_rag_app():
     container = DependencyContainer()
     rag_app = create_graph(
-        security=container.security_node(),
         executor=container.executor_node(),
         flatten=container.flatten_node(),
         synthesizer=container.synthesizer_node(),

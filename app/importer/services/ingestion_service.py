@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Any
 from shared.interfaces.document_loader import DocumentLoaderProvider
 from shared.interfaces.vectorstore import VectorStoreProvider
@@ -111,8 +112,6 @@ class IngestionService:
 
     def _validate_file(self, file_path: str) -> bool:
         """Validates file before import"""
-        import os
-
         if not os.path.exists(file_path):
             logger.error(f"File does not exist: {file_path}")
             return False

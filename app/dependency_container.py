@@ -8,7 +8,6 @@ from shared.providers.local_prompts import LocalPromptProvider
 from shared.providers.document_repository import VectorDocumentRepository
 from importer.services.document_processor import DocumentProcessor
 from importer.services.ingestion_service import IngestionService
-from retriever.core.nodes.security import SecurityNode
 from retriever.core.nodes.executor import ExecutorNode
 from retriever.core.nodes.flatten import FlattenNode
 from retriever.core.nodes.synthesizer import SynthesizerNode
@@ -16,8 +15,6 @@ from retriever.core.nodes.synthesizer import SynthesizerNode
 
 class DependencyContainer(containers.DeclarativeContainer):
     """DI Container for baseline RAG (Importer + Retriever)"""
-
-    # Shared Infrastructure
 
     document_loader = providers.Singleton(PyMuPDFLoaderProvider)
 
@@ -46,8 +43,6 @@ class DependencyContainer(containers.DeclarativeContainer):
         vector_provider=vector_store
     )
 
-    # Importer Services
-
     document_processor = providers.Singleton(
         DocumentProcessor,
         chunk_size=CONFIG.CHUNK_SIZE,
@@ -59,16 +54,6 @@ class DependencyContainer(containers.DeclarativeContainer):
         document_loader=document_loader,
         document_processor=document_processor,
         vector_store=vector_store
-    )
-
-    # Retriever Nodes
-
-    security_node = providers.Factory(
-        SecurityNode,
-        llm=llm_service,
-        prompt_provider=prompt_service,
-        settings={"model": "gpt-4o-mini", "temperature": 0.0},
-        prompt_name="rag_security_check"
     )
 
     executor_node = providers.Factory(

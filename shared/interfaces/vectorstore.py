@@ -8,20 +8,19 @@ class DocumentChunk:
     """Document chunk ready for vector store"""
     content: str
     metadata: dict | None = None
-    embedding: List[float] | None = None
 
 
 class VectorProvider(ABC):
     """Unified interface for vector stores (PGVector, Pinecone, etc.)"""
 
     @abstractmethod
-    def search(self, query: str, k: int = 3) -> List[str]:
-        """Semantic document search"""
+    def search_with_metadata(self, query: str, k: int = 3) -> List[dict]:
+        """Semantic search returning list of {content, metadata} dicts"""
         pass
 
     @abstractmethod
-    def add_documents(self, documents: Union[List[DocumentChunk], List]) -> int:
-        """Add documents to vector store"""
+    def add_documents(self, documents: List[DocumentChunk]) -> int:
+        """Add documents to vector store, returns count added"""
         pass
 
     @abstractmethod
@@ -36,9 +35,5 @@ class VectorProvider(ABC):
 
     @abstractmethod
     def get_document_registry(self) -> dict:
-        """Returns registry of uploaded documents"""
+        """Returns registry of uploaded documents grouped by source file"""
         pass
-
-
-# Alias for backward compatibility
-VectorStoreProvider = VectorProvider

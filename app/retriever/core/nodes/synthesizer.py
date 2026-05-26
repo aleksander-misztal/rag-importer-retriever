@@ -16,11 +16,12 @@ class SynthesizerNode:
         self.prompt_name = prompt_name
 
     def __call__(self, state: GraphState) -> dict:
-        context = "\n---\n".join(state["context"])
         question = state["question"]
 
-        if not state["context"]:
+        if not state.get("context"):
             return {"answer": "No relevant materials found in knowledge base."}
+
+        context = "\n---\n".join(state["context"])
 
         template = self.prompt_provider.get_prompt(self.prompt_name)
         prompt = template.format(context=context, question=question)

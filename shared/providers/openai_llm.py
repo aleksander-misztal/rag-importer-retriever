@@ -7,18 +7,16 @@ logger = logging.getLogger(__name__)
 
 
 class OpenAILLMProvider(LLMProvider):
-    """OpenAI LLM provider implementation (GPT-4, GPT-4o, etc.)."""
+    """OpenAI LLM provider — reuses ChatOpenAI instances per (model, settings) key."""
 
     def __init__(self, api_key: str):
         self._api_key = api_key
-        logger.info("✅ OpenAI LLM provider initialized")
+        self._clients: dict[tuple, ChatOpenAI] = {}
+        logger.info("OpenAI LLM provider initialized")
 
     def invoke(self, prompt: str, **kwargs: Any) -> str:
-        """Invokes LLM with prompt and returns response text."""
-        try:
-            llm = ChatOpenAI(openai_api_key=self._api_key, **kwargs)
-            response = llm.invoke(prompt)
-            return str(response.content)
-        except Exception as e:
-            logger.error(f"LLM invocation error: {e}")
-            raise
+        cache_key = tuple(sorted(kwargs.items()))
+        if cache_key not in self._clients:
+            self._clients[cache_key] = ChatOpenAI(openai_api_key=self._api_key, **kwargs)
+        response = self._clients[cache_key].invoke(prompt)
+        return str(response.content)
