@@ -6,7 +6,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dependency_container import DependencyContainer
 from retriever.core.graph import create_graph
-from shared.common.config import CONFIG
 from shared.common.logger import setup_logger
 
 logger = setup_logger("retriever_ui")
@@ -15,28 +14,19 @@ logger = setup_logger("retriever_ui")
 @st.cache_resource
 def get_rag_app():
     container = DependencyContainer()
-
-    reranker = container.reranker_node() if CONFIG.RERANKING_ENABLED else None
-    flatten = None if CONFIG.RERANKING_ENABLED else container.flatten_node()
-
     rag_app = create_graph(
         security=container.security_node(),
-        generator=container.generator_node(),
         executor=container.executor_node(),
+        flatten=container.flatten_node(),
         synthesizer=container.synthesizer_node(),
-        reranker=reranker,
-        flatten=flatten,
     )
-
-    mode = "reranker" if CONFIG.RERANKING_ENABLED else "flatten"
-    logger.info(f"RAG graph compiled (mode={mode})")
+    logger.info("RAG graph compiled")
     return rag_app
 
 
 def render():
     st.title("RAG Retriever")
-    mode_label = "Reranker ON" if CONFIG.RERANKING_ENABLED else "Reranker OFF"
-    st.caption(f"Ask questions about your documents  |  {mode_label}")
+    st.caption("Ask questions about your documents")
 
     rag_app = get_rag_app()
 

@@ -1,6 +1,5 @@
-gradio
-fastapi
-uvicorn
+streamlit
+pandas
 langchain
 langchain-openai
 langchain-community
@@ -10,8 +9,5 @@ langgraph
 pymupdf
 psycopg2-binary
 python-dotenv
-langfuse
-huggingface-hub
 dependency-injector
 pydantic-settings
-pytz

@@ -13,18 +13,13 @@ class ExecutorNode:
         self.k = k
 
     def __call__(self, state: GraphState) -> dict:
-        """Performs multi-query retrieval, returning results grouped by sub-query"""
-        queries = state.get("sub_queries", [state["question"]])
+        """Retrieves documents for the question"""
+        question = state["question"]
 
         try:
-            documents_by_query = {}
-            for query in queries:
-                docs = self.repository.search(query, k=self.k)
-                documents_by_query[query] = docs
-
-            total = sum(len(d) for d in documents_by_query.values())
-            logger.info(f"Retrieved {total} documents across {len(queries)} sub-queries")
-            return {"documents_by_query": documents_by_query}
+            docs = self.repository.search(question, k=self.k)
+            logger.info(f"Retrieved {len(docs)} documents")
+            return {"documents_by_query": {question: docs}}
 
         except Exception as e:
             logger.error(f"Retrieval error: {e}")
