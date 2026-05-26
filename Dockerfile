@@ -25,5 +25,5 @@ COPY app/ /app/
 # Set Python path
 ENV PYTHONPATH=/app
 
-# Run unified application
-CMD ["python", "main.py"]
+# Run Streamlit app
+CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
