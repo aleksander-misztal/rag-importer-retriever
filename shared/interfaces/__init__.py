@@ -5,7 +5,7 @@ from shared.interfaces.embeddings import EmbeddingProvider
 from shared.interfaces.llm import LLMProvider
 from shared.interfaces.prompts import PromptProvider
 from shared.interfaces.repository import DocumentRepository, Document
-from shared.interfaces.vectorstore import VectorProvider, VectorStoreProvider, DocumentChunk
+from shared.interfaces.vectorstore import VectorProvider, DocumentChunk
 
 __all__ = [
     "DocumentLoaderProvider",
@@ -16,6 +16,5 @@ __all__ = [
     "DocumentRepository",
     "Document",
     "VectorProvider",
-    "VectorStoreProvider",
     "DocumentChunk",
 ]
